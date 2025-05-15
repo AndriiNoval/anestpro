@@ -92,22 +92,38 @@ serviceSlider.addEventListener('mousemove', (e) => {
 
 // БургерМеню========================================================
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
   const burgerBtn = document.querySelector('.burger');
   const burgerMenu = document.getElementById('burgerMenu');
   const closeBtn = document.querySelector('.burger-close');
   const body = document.body;
   
-  // Открытие меню
-  burgerBtn.addEventListener('click', function() {
+  // Получаем все ссылки внутри меню
+  const menuLinks = document.querySelectorAll('.burger-link, .burger-phone, .social-link');
+  
+  // Функция открытия меню
+  function openMenu() {
     burgerMenu.classList.add('active');
     body.style.overflow = 'hidden';
-  });
+  }
   
-  // Закрытие меню
-  closeBtn.addEventListener('click', function() {
+  // Функция закрытия меню
+  function closeMenu() {
     burgerMenu.classList.remove('active');
     body.style.overflow = '';
+  }
+  
+  // Открытие меню
+  burgerBtn.addEventListener('click', openMenu);
+  
+  // Закрытие меню
+  closeBtn.addEventListener('click', closeMenu);
+  
+  // Закрытие при клике на ссылки меню
+  menuLinks.forEach(link => {
+    link.addEventListener('click', closeMenu);
   });
   
   // Закрытие при клике вне меню
@@ -115,19 +131,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!burgerMenu.contains(e.target) && 
         e.target !== burgerBtn && 
         !burgerBtn.contains(e.target)) {
-      burgerMenu.classList.remove('active');
-      body.style.overflow = '';
+      closeMenu();
     }
   });
   
   // Закрытие по Escape
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-      burgerMenu.classList.remove('active');
-      body.style.overflow = '';
+      closeMenu();
     }
   });
 });
+
+
 // скрытие скрола в футере
 document.addEventListener('DOMContentLoaded', function() {
   const socialsBlock = document.querySelector('.socials-sticky');
