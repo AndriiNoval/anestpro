@@ -73,56 +73,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Обработка отправки формы
   async function handleFormSubmit(form, e) {
-    e.preventDefault();
+  e.preventDefault();
+  if (!validateForm(form)) return;
 
-    if (!validateForm(form)) return;
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span>Відправка...</span>';
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnContent = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>Відправка...</span>';
+  try {
+    const formData = {
+      name: form.querySelector('.name, [name="name"]').value.trim(),
+      phone: form.querySelector('.phone, [name="phone"]').value.trim(),
+      message: form.querySelector('.message, [name="message"]')?.value.trim() || '',
+      origin: window.location.origin // Добавляем origin для CORS
+    };
 
-    try {
-      // Подготовка данных для отправки
-      const formData = {
-        name: form.querySelector('.name, [name="name"]').value.trim(),
-        phone: form.querySelector('.phone, [name="phone"]').value.trim(),
-        message: form.querySelector('.message, [name="message"]')?.value.trim() || ''
-      };
+    const response = await fetch('https://script.google.com/macros/s/AKfycbwOAwab61zOwAX2ewuIVU2fMnEsD_8ATAUl-fdqaCL4OyMt5fmogz7vwSKLAzewuu2V/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+      mode: 'cors' // Явно указываем режим CORS
+    });
 
-      // Отправка данных на Google Apps Script
-      const response = await fetch('https://script.google.com/macros/s/AKfycbzwkv4vd7dlMdfKkTLTDnM1f9CDlTjaUvBkNk5wWApUs7MoTfLsE_s3whM2bj0AJ25b/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-      if (!result.success) throw new Error(result.error || 'Не вдалося відправити дані');
-
-      // Успешная отправка - обработка для модальных форм
-      if (form.classList.contains('modal-form')) {
-        form.style.display = 'none';
-        const successMessage = form.nextElementSibling;
-        if (successMessage && successMessage.classList.contains('success-message')) {
-          successMessage.style.display = 'block';
-        }
-        setTimeout(closeModal, 3000);
-      } else {
-        // Для основной формы
-        alert('Дякуємо! Ваше повідомлення відправлено.');
-        form.reset();
-      }
-    } catch (error) {
-      console.error('Помилка відправки форми:', error);
-      alert(`Помилка при відправці: ${error.message || 'Спробуйте ще раз пізніше'}`);
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalBtnContent;
+    if (!response.ok) throw new Error('Ошибка сети');
+    const result = await response.json();
+    
+    if (!result.success) throw new Error(result.error || 'Ошибка сервера');
+    
+    // Успешная отправка
+    if (form.classList.contains('modal-form')) {
+      form.style.display = 'none';
+      const successMessage = form.nextElementSibling;
+      if (successMessage) successMessage.style.display = 'block';
+      setTimeout(closeModal, 3000);
+    } else {
+      alert('Дякуємо! Ваше повідомлення відправлено.');
+      form.reset();
     }
+  } catch (error) {
+    console.error('Помилка відправки форми:', error);
+    alert(`Помилка: ${error.message || 'Спробуйте ще раз'}`);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Відправити';
   }
+}
 
   // Сброс ошибок при вводе
   function setupInputValidation(form) {
