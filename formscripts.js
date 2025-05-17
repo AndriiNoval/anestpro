@@ -95,28 +95,41 @@ document.addEventListener('DOMContentLoaded', function() {
       body: JSON.stringify(formData)
     });
 
-    // Проверяем content-type
-    const contentType = response.headers.get('content-type');
+    // Улучшенная обработка ответа
+    const text = await response.text();
     let result;
     
-    if (contentType && contentType.includes('application/json')) {
-      result = await response.json();
-    } else {
-      const text = await response.text();
-      throw new Error(`Сервер вернул не-JSON: ${text.substring(0, 100)}`);
+    try {
+      result = JSON.parse(text);
+    } catch {
+      throw new Error("Сервер вернул невалидный ответ");
     }
 
-    if (result.error) {
-      throw new Error(result.message || 'Помилка сервера');
+    if (!response.ok || result.error) {
+      throw new Error(result.error || "Ошибка сервера");
     }
     
-    // Успешная отправка
-    showSuccessMessage(form); // Ваша функция показа успеха
+    // УСПЕШНАЯ ОТПРАВКА
+    form.reset(); // Очищаем форму
+    
+    // Показываем сообщение (ваш код)
+    showSuccessMessage(form); 
+    
+    // Закрываем модальное окно через 1.5 секунды
+    setTimeout(() => {
+      const modalOverlay = document.querySelector('.modal-overlay');
+      if (modalOverlay) modalOverlay.classList.remove('active');
+    }, 1500);
     
   } catch (error) {
-    console.error('Помилка відправки:', error);
-    showErrorMessage(error.message); // Ваша функция показа ошибки
+    // ОБРАБОТКА ОШИБКИ
+    console.error('Ошибка отправки:', error);
+    
+    // Показываем сообщение об ошибке
+    showErrorMessage(error.message);
+    
   } finally {
+    // Восстанавливаем кнопку в любом случае
     submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
   }
