@@ -208,3 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
     mainForm.setAttribute('novalidate', true);
   }
 });
+
+function showErrorMessage(message) {
+  alert('Помилка: ' + message); // или сделайте красивее через модалку
+}
