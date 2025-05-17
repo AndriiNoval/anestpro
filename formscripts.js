@@ -77,47 +77,48 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!validateForm(form)) return;
 
   const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerHTML;
   submitBtn.disabled = true;
-  submitBtn.innerHTML = '<span>Відправка...</span>';
+  submitBtn.innerHTML = '<span class="spinner">Відправка...</span>';
 
   try {
     const formData = {
-      name: form.querySelector('.name, [name="name"]').value.trim(),
-      phone: form.querySelector('.phone, [name="phone"]').value.trim(),
-      message: form.querySelector('.message, [name="message"]')?.value.trim() || '',
-      origin: window.location.origin // Добавляем origin для CORS
+      name: form.querySelector('[name="name"]').value.trim(),
+      phone: form.querySelector('[name="phone"]').value.trim(),
+      message: form.querySelector('[name="message"]')?.value.trim() || '',
+      origin: window.location.origin
     };
 
     const response = await fetch('https://workers.andreynovalskyi.workers.dev/', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-      mode: 'cors' // Явно указываем режим CORS
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
     });
 
-    if (!response.ok) throw new Error('Ошибка сети');
-    const result = await response.json();
+    // Проверяем content-type
+    const contentType = response.headers.get('content-type');
+    let result;
     
-    if (!result.success) throw new Error(result.error || 'Ошибка сервера');
+    if (contentType && contentType.includes('application/json')) {
+      result = await response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(`Сервер вернул не-JSON: ${text.substring(0, 100)}`);
+    }
+
+    if (result.error) {
+      throw new Error(result.message || 'Помилка сервера');
+    }
     
     // Успешная отправка
-    if (form.classList.contains('modal-form')) {
-      form.style.display = 'none';
-      const successMessage = form.nextElementSibling;
-      if (successMessage) successMessage.style.display = 'block';
-      setTimeout(closeModal, 3000);
-    } else {
-      alert('Дякуємо! Ваше повідомлення відправлено.');
-      form.reset();
-    }
+    showSuccessMessage(form); // Ваша функция показа успеха
+    
   } catch (error) {
-    console.error('Помилка відправки форми:', error);
-    alert(`Помилка: ${error.message || 'Спробуйте ще раз'}`);
+    console.error('Помилка відправки:', error);
+    showErrorMessage(error.message); // Ваша функция показа ошибки
   } finally {
     submitBtn.disabled = false;
-    submitBtn.innerHTML = 'Відправити';
+    submitBtn.innerHTML = originalText;
   }
 }
 
