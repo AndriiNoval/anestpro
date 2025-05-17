@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
       origin: window.location.origin // Добавляем origin для CORS
     };
 
-    const response = await fetch('https://script.google.com/macros/s/AKfycbw0fQgvLaFJkkhRiqNLRprM0dSXv7UGMC50ZWSRegvk5CYnSpgYI35aFfC8HrZLHOW4/exec', {
+    const response = await fetch('https://workers.andreynovalskyi.workers.dev/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
