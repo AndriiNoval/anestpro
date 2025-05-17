@@ -225,3 +225,17 @@ document.addEventListener('DOMContentLoaded', function() {
 function showErrorMessage(message) {
   alert('Помилка: ' + message); // или сделайте красивее через модалку
 }
+
+function showSuccessMessage(form) {
+  // Скрываем формы внутри модального окна
+  form.style.display = 'none';
+
+  // Находим соответствующий блок с сообщением об успехе рядом с этой формой
+  const successMessage = form.parentElement.querySelector('.success-message');
+  if (successMessage) {
+    successMessage.style.display = 'block';
+  } else {
+    // Если нет, просто alert
+    alert('Дякуємо! Ваше повідомлення відправлено.');
+  }
+}
