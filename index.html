@@ -855,11 +855,11 @@
       </p>
       <form class="modal-form" novalidate>
         <div class="modal-form-group">
-          <input type="text" placeholder="Повне ім'я*" required class="modal-input name">
+          <input name="name" type="text" placeholder="Повне ім'я*" required class="modal-input name">
           <div class="error-message name-error">Будь ласка, введіть ваше ім'я</div>
-          <input type="tel" placeholder="Телефон*" required class="modal-input phone">
+          <input name="phone" type="tel" placeholder="Телефон*" required class="modal-input phone">
           <div class="error-message phone-error">Будь ласка, введіть ваш телефон</div>
-          <textarea placeholder="Чим ми можемо бути корисними?" class="modal-textarea"></textarea>
+          <textarea name="message" placeholder="Чим ми можемо бути корисними?" class="modal-textarea"></textarea>
           <button type="submit" class="modal-submit-btn">
             <span>Відправити</span>
             <svg class="btn-icon" width="33" height="32">
