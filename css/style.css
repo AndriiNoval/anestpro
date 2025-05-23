@@ -2085,6 +2085,7 @@ text-align: center;
 
   .hero-description-item span{
     max-width: 200px;
+    text-align: left;
   }
 
   .hero-description-item svg {
