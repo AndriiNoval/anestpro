@@ -111,6 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // УСПЕШНАЯ ОТПРАВКА
     form.reset(); // Очищаем форму
+
+    notifyTelegram();
     
     // Показываем сообщение (ваш код)
     showSuccessMessage(form); 

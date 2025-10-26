@@ -58,28 +58,68 @@ carousel.addEventListener('mousemove', (e) => {
 
 
 
-// слайдер карточки=========================================================================== 
+// слайдер карточки сервис=========================================================================== 
+
+
+
+
 const serviceSlider = document.querySelector('.services-slider');
 
 let isServiceSliderActive = false;
 let serviceSliderStartX;
 let serviceSliderScrollLeft;
+let autoScrollInterval;
+let scrollDirection = 1; // 1 для прокрутки вправо, -1 для прокрутки влево
 
+// Параметры прокрутки
+const scrollSpeed = 1; // Меньше значение — медленнее прокрутка (пиксели за шаг)
+const scrollInterval = 50; // Больше значение — реже обновление (миллисекунды)
+
+// Функция для запуска автоматической прокрутки
+function startAutoScroll() {
+  autoScrollInterval = setInterval(() => {
+    if (!isServiceSliderActive) {
+      serviceSlider.scrollLeft += scrollSpeed * scrollDirection;
+
+      // Проверка достижения конца карусели
+      if (serviceSlider.scrollLeft >= serviceSlider.scrollWidth - serviceSlider.clientWidth - 1) {
+        scrollDirection = -1; // Меняем направление на влево
+      }
+      // Проверка достижения начала карусели
+      else if (serviceSlider.scrollLeft <= 0) {
+        scrollDirection = 1; // Меняем направление на вправо
+      }
+    }
+  }, scrollInterval);
+}
+
+// Функция для остановки автоматической прокрутки
+function stopAutoScroll() {
+  clearInterval(autoScrollInterval);
+}
+
+// Запускаем автопрокрутку при загрузке страницы
+startAutoScroll();
+
+// Обработка событий мыши для перетаскивания
 serviceSlider.addEventListener('mousedown', (e) => {
   isServiceSliderActive = true;
   serviceSliderStartX = e.pageX - serviceSlider.offsetLeft;
   serviceSliderScrollLeft = serviceSlider.scrollLeft;
   serviceSlider.classList.add('grabbing', 'noselect');
+  stopAutoScroll(); // Останавливаем автопрокрутку при взаимодействии
 });
 
 serviceSlider.addEventListener('mouseleave', () => {
   isServiceSliderActive = false;
   serviceSlider.classList.remove('grabbing', 'noselect');
+  startAutoScroll(); // Возобновляем автопрокрутку
 });
 
 serviceSlider.addEventListener('mouseup', () => {
   isServiceSliderActive = false;
   serviceSlider.classList.remove('grabbing', 'noselect');
+  startAutoScroll(); // Возобновляем автопрокрутку
 });
 
 serviceSlider.addEventListener('mousemove', (e) => {
@@ -89,6 +129,31 @@ serviceSlider.addEventListener('mousemove', (e) => {
   const walk = (x - serviceSliderStartX) * 2;
   serviceSlider.scrollLeft = serviceSliderScrollLeft - walk;
 });
+
+// Обработка сенсорных событий для мобильных устройств
+serviceSlider.addEventListener('touchstart', (e) => {
+  isServiceSliderActive = true;
+  serviceSliderStartX = e.touches[0].pageX - serviceSlider.offsetLeft;
+  serviceSliderScrollLeft = serviceSlider.scrollLeft;
+  stopAutoScroll(); // Останавливаем автопрокрутку
+});
+
+serviceSlider.addEventListener('touchend', () => {
+  isServiceSliderActive = false;
+  startAutoScroll(); // Возобновляем автопрокрутку
+});
+
+serviceSlider.addEventListener('touchmove', (e) => {
+  if (!isServiceSliderActive) return;
+  e.preventDefault();
+  const x = e.touches[0].pageX - serviceSlider.offsetLeft;
+  const walk = (x - serviceSliderStartX) * 2;
+  serviceSlider.scrollLeft = serviceSliderScrollLeft - walk;
+});
+
+// Остановка автопрокрутки при наведении мыши
+serviceSlider.addEventListener('mouseenter', stopAutoScroll);
+serviceSlider.addEventListener('mouseleave', startAutoScroll);
 
 // БургерМеню========================================================
 

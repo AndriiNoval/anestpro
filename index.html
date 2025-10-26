@@ -235,7 +235,7 @@
           <li class="service-card partner-card">
             <article class="card-article">
               <div class="card-top">
-                <h3 class="card-title">Курси по невідкладним станам</h3>
+                <h3 class="card-title">Курси по невідкладних станам</h3>
                 <p class="partner-card-text">Виїзне навчання з теоретичним матеріалом та відпрацюванням практичних навичок. Розбір клінічних випадків.</p>
               </div>
               <div class="card-bottom">
@@ -563,6 +563,21 @@
       </div>
     </section>
 
+    <!-- <section id="video" class="video-lecture-section">
+  <div class="container">
+    <h2 class="video-lecture-title">Відео-лекція доктора</h2>
+    <div class="video-lecture-wrapper">
+      <iframe
+        src="https://www.youtube.com/embed/ВАШ_ID_ВІДЕО"
+        title="Відео-лекція"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</section> -->
+
     <section id="faq" class="faq section-padding">
       <div class="container">
         <div class="faq-content">
@@ -885,5 +900,25 @@
 
   <script src="formscripts.js"></script>
   <script src="scripts.js"></script>
+
+  <script>
+    function notifyTelegram() {
+  const token = '8473680064:AAFCRDXdVBbNixRXkRnDAAMZvA7CH0ZBXFM';
+  const chatId = '317534205'; // ← это ты
+
+  const text = '📬 Хтось надіслав форму з сайту AnestPro';
+
+  fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: text
+    })
+  });
+}
+  </script>
 </body>
 </html>
